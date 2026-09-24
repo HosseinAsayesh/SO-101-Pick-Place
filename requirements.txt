@@ -1,0 +1,10 @@
+# Install everything (run inside the activated .venv):
+#   pip install -r requirements.txt
+mujoco>=3.2
+numpy>=1.26
+matplotlib>=3.8
+pytest>=8
+# our own package, editable, so `import so101` works from scripts/ and tests/
+-e .
+# Added later, when the vision phase starts:
+# opencv-python>=4.9

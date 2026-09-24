@@ -1,0 +1,44 @@
+<!--
+  Pick-and-place scene for the SO-101 arm.
+  - Robot:  so101_new_calib.xml (from TheRobotStudio/SO-ARM100, Apache-2.0, unmodified)
+  - World:  floor = table surface (z = 0), one red cube, two cameras.
+  Units: metres, radians (MuJoCo defaults).
+-->
+<mujoco model="so101_pick_place">
+  <include file="so101_new_calib.xml"/>
+
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="135" elevation="-25" offwidth="1280" offheight="960"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="table" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
+             rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="table" texture="table" texuniform="true" texrepeat="10 10" reflectance="0.1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 3.5" dir="0 0 -1" directional="true"/>
+
+    <!-- Table surface. Each checker square = 10 cm. -->
+    <geom name="table" type="plane" size="1 1 0.05" material="table"/>
+
+    <!-- Overview camera for screenshots. -->
+    <camera name="overview" pos="0.65 -0.55 0.45" xyaxes="0.65 0.76 0 -0.3 0.26 0.92"/>
+
+    <!-- Top-down camera for the vision phase. Looks straight down (-z); image "up" = world +y. -->
+    <camera name="top_cam" pos="0.22 0 0.70" fovy="45"/>
+
+    <!-- Object to pick: 3 cm cube, 20 g, free to move (6-DOF free joint). -->
+    <body name="cube" pos="0.22 0.08 0.015">
+      <freejoint name="cube_free"/>
+      <geom name="cube" type="box" size="0.015 0.015 0.015" rgba="0.85 0.2 0.2 1" mass="0.02"
+            friction="1.0 0.01 0.001"/>
+    </body>
+  </worldbody>
+</mujoco>
