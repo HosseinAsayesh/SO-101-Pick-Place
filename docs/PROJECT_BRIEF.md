@@ -60,12 +60,23 @@ separate perception errors from grasping errors).
 |---|---|---|---|
 | 0 | Repo, model, viewer | Links, joints, DOF, MJCF | `pytest` green, lesson 01 written ✅ |
 | 1 | Forward kinematics | Rotation matrices, homogeneous transforms, DH parameters | Our FK matches MuJoCo to 3e-16 m; exact DH table derived ✅ |
-| 2 | Inverse kinematics | Geometric IK (planar 3R + base), Jacobian, damped least squares | Tip reaches random reachable poses to < 1 mm |
-| 3 | Scripted pick-and-place (ground-truth pose) | Trajectory generation (cubic/quintic), servo control, grasp contacts | Baseline success rate measured |
+| 2 | Inverse kinematics | Geometric IK (planar 2R + base), Jacobian, damped least squares | Closed form exact to 1e-9 m over 500 targets; workspace mapped ✅ |
+| 3 | Scripted pick-and-place (ground-truth pose) | Trajectory generation (cubic/quintic), servo control, grasp contacts | **25/25 = 100%** (Wilson 87–100%), placement error 2.1 mm ✅ |
 | 4 | Vision | Pinhole camera model, intrinsics/extrinsics, colour segmentation, pixel → world | Cube pose error < 5 mm, < 5° |
 | 5 | Full pipeline + evaluation harness | Statistics of success rates, randomization | Success-rate report with failure breakdown |
 | 6 | ROS 2 port | Nodes, topics, services, launch files | Same pipeline as 3 ROS 2 nodes |
 | + | Stretch | Clutter, domain randomization, learned grasp detection, depth camera | — |
+
+## 5b. Constraints found so far (lesson 03)
+- **Top-down hover ceiling ≈ 9 cm** (8.7 cm above the cube): `wrist_flex` (±95°) cannot hold the
+  gripper vertical any higher, so approach waypoints must sit around 6–7 cm.
+- Reachable top-down area at grasp height: 1287 cm² at any jaw angle, max reach ≈ 31 cm. Trial
+  randomization in phase 5 must stay inside it.
+- Typically only 1 of the 8 IK branches for a table target is inside the joint limits.
+- **The gripper needed collision pads** (`tools/derive_grasp_model.py`): MuJoCo's convex-hull mesh
+  collisions make the SO-101's claw a solid block. Pads are 3 cm long, 3 mm thick, pre-rotated 26°.
+- The grasp point is offset from the model's tip site: `GRASP_OFFSET = (-0.030, 0, 0.014)` m.
+- Servo tracking: 0.13° peak, 0.03° settled. Torque limit 3.35 N·m per joint is a hard wall.
 
 ## 6. Open questions
 - Place target: fixed, or also picked from camera (e.g. a coloured pad)?

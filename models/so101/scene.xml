@@ -1,11 +1,11 @@
 <!--
   Pick-and-place scene for the SO-101 arm.
-  - Robot:  so101_new_calib.xml (from TheRobotStudio/SO-ARM100, Apache-2.0, unmodified)
+  - Robot:  so101_pick_place.xml (upstream model + collision pads; see tools/derive_grasp_model.py)
   - World:  floor = table surface (z = 0), one red cube, two cameras.
   Units: metres, radians (MuJoCo defaults).
 -->
 <mujoco model="so101_pick_place">
-  <include file="so101_new_calib.xml"/>
+  <include file="so101_pick_place.xml"/>
 
   <option timestep="0.002" gravity="0 0 -9.81"/>
 

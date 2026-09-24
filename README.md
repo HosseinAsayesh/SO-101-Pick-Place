@@ -12,9 +12,9 @@ tests.
 |---|---|---|
 | 0 | Repo, robot model, viewer, links/joints/DOF | ✅ |
 | 1 | Forward kinematics | ✅ |
-| 2 | Inverse kinematics | ⏳ next |
-| 3 | Scripted pick-and-place (ground-truth pose) | |
-| 4 | Vision: camera model, detection, pixel → world | |
+| 2 | Inverse kinematics | ✅ |
+| 3 | Scripted pick-and-place (ground-truth pose) | ✅ 100% over 25 trials |
+| 4 | Vision: camera model, detection, pixel → world | ⏳ next |
 | 5 | Evaluation harness, success rate | |
 | 6 | ROS 2 port | |
 
@@ -35,7 +35,7 @@ cd "path\to\SO-101-Pick&Place"
 python -m venv .venv
 .venv\Scripts\activate            # PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m pytest                  # should print: 15 passed
+python -m pytest                  # should print: 39 passed
 ```
 Linux/macOS: `source .venv/bin/activate` instead of the activate line.
 
@@ -44,12 +44,16 @@ Linux/macOS: `source .venv/bin/activate` instead of the activate line.
 python scripts/01_view_robot.py       # interactive viewer, joint sliders in the right panel
 python scripts/02_inspect_joints.py   # links, joints, DOF, FK experiments printed to terminal
 python scripts/03_render_snapshot.py   # save PNGs from the overview and top-down cameras
-python scripts/04_forward_kinematics.py  # our own FK vs MuJoCo, and the DH table
+python scripts/04_forward_kinematics.py   # our own FK vs MuJoCo, and the DH table
+python scripts/05_inverse_kinematics.py   # closed-form IK, workspace map, Jacobian/DLS
+python scripts/06_pick_and_place.py       # trajectories, gripper, full pick-and-place + baseline
+python scripts/06_pick_and_place.py --watch --trials 0   # ...and watch it in the MuJoCo viewer
 ```
 
 ## Layout
 ```
-models/so101/     robot model (upstream, unmodified) + our scene.xml
+models/so101/     robot model (upstream + derived grasp model) and our scene.xml
+tools/            one-off generators (derive_grasp_model.py)
 src/so101/        library code (import so101)
 scripts/          numbered lesson scripts
 tests/            pytest checks
